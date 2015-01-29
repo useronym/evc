@@ -23,7 +23,7 @@ receive
         InternalVC = evc:event(VC),
         % Merge the two VCs to get the new VC for B
         NewVC = evc:merge(InternalVC, VCFromA),
-        % Now, the current VC for B is "older" compared to A
-        true = evc:older(NewVC, VCFromA)
+        % Now, the VC from A is "older" compared to the current VC in B
+        true = evc:older(VCFromA, NewVC)
 end
 ```
