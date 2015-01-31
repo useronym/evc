@@ -12,7 +12,7 @@
 -export([new/0, new/1, on_index/2, event/1, event/2, merge/2, older/2]).
 
 new() ->
-    new(self()).
+    new(node(self())).
 
 new(Pid) ->
     M = maps:new(),
@@ -22,7 +22,7 @@ on_index(Index, M) ->
     maps:get(Index, M).
 
 event(M) ->
-    event(self(), M).
+    event(node(self()), M).
 
 event(Pid, M) ->
     maps:update(Pid, maps:get(Pid, M) + 1, M).
