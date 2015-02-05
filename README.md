@@ -8,9 +8,6 @@ If A doesn't descend from B and B doesn't descend from A, compare timestamps ins
 suitable for plugging into, for example, lists:sort/2.
 
 
-![Image of VC](http://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Vector_Clock.svg/725px-Vector_Clock.svg.png)
-
-
 ## Usage
 Actor A
 ```erlang
@@ -34,8 +31,7 @@ receive
 end
 ```
 
-
-Total ordering example
+#### Total ordering example
 ```erlang
 M = evc:merge(evc:event(a, evc:new(a)), evc:event(b, evc:new(b))), % M is {1, 1} - 1 event in actor A and 1 event in actor B
 A = evc:event(a, M),
