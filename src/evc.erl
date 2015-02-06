@@ -83,4 +83,5 @@ size_order(M1, M2) ->
     end.
 
 timestamp() ->
-    os:timestamp().
+    {_Ms, S, Us} = os:timestamp(),
+    S * 1000000 + Us.
