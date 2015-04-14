@@ -11,6 +11,11 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+base_test() ->
+    ?assertEqual(0, evc:get_counter(aaa, evc:new())),
+    VC = evc:event(aaa, evc:new()),
+    ?assertEqual(1, evc:get_counter(aaa, VC)).
+
 merge_test() ->
     A = evc:new(a),
     B = evc:new(b),

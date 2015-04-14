@@ -28,7 +28,7 @@ new(Key) ->
     maps:put(?TIMESTAMP, timestamp(), M).
 
 get_counter(Key, M) ->
-    maps:get(Key, M).
+    maps:get(Key, M, 0).
 
 get_timestamp(M) ->
     maps:get(?TIMESTAMP, M).
@@ -37,7 +37,7 @@ event(M) ->
     event(node(), M).
 
 event(Pid, M) ->
-    Mm = maps:update(Pid, maps:get(Pid, M) + 1, M),
+    Mm = maps:put(Pid, maps:get(Pid, M, 0) + 1, M),
     maps:update(?TIMESTAMP, timestamp(), Mm).
 
 merge(M1, M2) ->
