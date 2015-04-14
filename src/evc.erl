@@ -10,7 +10,12 @@
 -module(evc).
 
 %% API
--export([new/0, new/1, on_key/2, get_timestamp/1, event/1, event/2, merge/2, descends/2, compare/2]).
+-export([
+    new/0, new/1,
+    get_counter/2, get_timestamp/1,
+    event/1, event/2,
+    merge/2, descends/2,
+    compare/2]).
 
 
 -define(TIMESTAMP, 'TIMESTAMP').
@@ -22,7 +27,7 @@ new(Key) ->
     M = maps:put(Key, 0, maps:new()),
     maps:put(?TIMESTAMP, timestamp(), M).
 
-on_key(Key, M) ->
+get_counter(Key, M) ->
     maps:get(Key, M).
 
 get_timestamp(M) ->
@@ -63,14 +68,11 @@ descends_for_ks(M1, M2, [K | Ks]) ->
 % doc Returns true if M1 is less than or equal to M2. If can't decide, compares the timestamps.
 compare(M1, M2) ->
     case descends(M2, M1) of
-        true ->
-            true;
+        true -> true;
         _ ->
             case descends(M1, M2) of
-                true ->
-                    false;
-                _ ->
-                    get_timestamp(M1) =< get_timestamp(M2)
+                true -> false;
+                _ -> get_timestamp(M1) =< get_timestamp(M2)
             end
     end.
 
@@ -83,5 +85,5 @@ size_order(M1, M2) ->
     end.
 
 timestamp() ->
-    {_Ms, S, Us} = os:timestamp(),
-    S * 1000000 + Us.
+    {MegaSecs, Secs, MicroSecs} = os:timestamp(),
+    MegaSecs*1000000000000 + Secs*1000000 + MicroSecs.
