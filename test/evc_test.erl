@@ -19,7 +19,7 @@ base_test() ->
 merge_test() ->
     A = evc:new(a),
     B = evc:new(b),
-    ?assertEqual(3, maps:size(evc:merge(A, B))),
+    ?assertEqual([a, b], evc:get_nodes(evc:merge(A, B))),
     A2 = evc:event(a, A),
     M = evc:merge(A2, B),
     ?assertEqual(1, evc:get_counter(a, M)),
