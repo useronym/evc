@@ -60,12 +60,11 @@ merge(M1, M2) ->
 
 %% @doc Returns true if M1 is a descendant of M2. Ignores timestamps.
 descends(M1, M2) ->
-    F = fun Loop([{K, M2Val} | Rest]) ->
+    fun Loop([{K, M2Val} | Rest]) ->
             (maps:get(K, M1, 0) >= M2Val) andalso Loop(Rest);
-            Loop([]) ->
-                true
-        end,
-    F(maps:to_list(M2)).
+        Loop([]) ->
+            true
+    end(maps:to_list(M2)).
 
 
 %% @doc Returns true if M1 is less than or equal to M2. If can't decide, compares the timestamps.
