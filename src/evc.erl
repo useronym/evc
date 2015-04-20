@@ -25,20 +25,23 @@ new() ->
 
 
 new(Key) ->
-    M = maps:put(Key, 0, maps:new()),
-    maps:put(?TIMESTAMP, timestamp(), M).
+    M = dict:store(Key, 0, dict:new()),
+    dict:store(?TIMESTAMP, timestamp(), M).
 
 
 get_counter(Key, M) ->
-    maps:get(Key, M, 0).
+    case dict:find(Key, M) of
+        {ok, Val} -> Val;
+        error -> 0
+    end.
 
 
 get_timestamp(M) ->
-    maps:get(?TIMESTAMP, M).
+    dict:fetch(?TIMESTAMP, M).
 
 
 get_nodes(M) ->
-    lists:delete(?TIMESTAMP, maps:keys(M)).
+    lists:delete(?TIMESTAMP, dict:fetch_keys(M)).
 
 
 event(M) ->
@@ -46,13 +49,13 @@ event(M) ->
 
 
 event(Pid, M) ->
-    Mm = maps:put(Pid, maps:get(Pid, M, 0) + 1, M),
-    maps:update(?TIMESTAMP, timestamp(), Mm).
+    Mm = dict:update_counter(Pid, 1, M),
+    dict:store(?TIMESTAMP, timestamp(), Mm).
 
 
 merge(M1, M2) ->
-    maps:fold(fun(K, M1Val, M2In) ->
-            maps:put(K, max(M1Val, maps:get(K, M2, 0)), M2In)
+    dict:fold(fun(K, M1Val, M2In) ->
+            dict:store(K, max(M1Val, get_counter(K, M2)), M2In)
         end,
         M2,
         M1).
@@ -61,10 +64,10 @@ merge(M1, M2) ->
 %% @doc Returns true if M1 is a descendant of M2. Ignores timestamps.
 descends(M1, M2) ->
     fun Loop([{K, M2Val} | Rest]) ->
-            (maps:get(K, M1, 0) >= M2Val) andalso Loop(Rest);
+            (get_counter(K, M1) >= M2Val) andalso Loop(Rest);
         Loop([]) ->
             true
-    end(maps:to_list(M2)).
+    end(dict:to_list(M2)).
 
 
 %% @doc Returns true if M1 is less than or equal to M2. If can't decide, compares the timestamps.
