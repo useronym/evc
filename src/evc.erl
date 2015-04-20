@@ -64,10 +64,10 @@ merge(M1, M2) ->
 %% @doc Returns true if M1 is a descendant of M2. Ignores timestamps.
 descends(M1, M2) ->
     dict:fold(fun(K, V2, Descends) ->
-        (V2 =< get_counter(K, M1)) and Descends
+            (V2 =< get_counter(K, M1)) and Descends
         end,
         true,
-        M2).
+        dict:erase(?TIMESTAMP, M2)).
 
 %% @doc Returns true if M1 is less than or equal to M2. If can't decide, compares the timestamps.
 compare(M1, M2) ->
