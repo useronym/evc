@@ -17,29 +17,29 @@ base_test() ->
     ?assertEqual(1, evc:get_counter(aaa, VC)).
 
 merge_test() ->
-    A = evc:new(a),
-    B = evc:new(b),
+    A = evc:event(a, evc:new()),
+    B = evc:event(b, evc:new()),
     ?assertEqual([a, b], evc:get_nodes(evc:merge(A, B))),
     A2 = evc:event(a, A),
     M = evc:merge(A2, B),
-    ?assertEqual(1, evc:get_counter(a, M)),
-    C = evc:new(c),
+    ?assertEqual(2, evc:get_counter(a, M)),
+    C = evc:new(),
     M2 = evc:merge(M, evc:event(c, C)),
     M2a = evc:event(a, M2),
-    ?assertEqual(2, evc:get_counter(a, M2a)),
+    ?assertEqual(3, evc:get_counter(a, M2a)),
     ?assertEqual(1, evc:get_counter(c, M2a)).
 
 older_test() ->
-    A = evc:event(a, evc:new(a)),
-    B = evc:event(b, evc:new(b)),
+    A = evc:event(a, evc:new()),
+    B = evc:event(b, evc:new()),
     M = evc:merge(A, B),
     ?assert(evc:descends(M, A)),
-    C = evc:event(c, evc:new(c)),
+    C = evc:event(c, evc:new()),
     M2 = evc:merge(C, M),
     ?assert(evc:descends(M2, M)).
 
 compare_test() ->
-    M = evc:merge(evc:event(a, evc:new(a)), evc:event(b, evc:new(b))),
+    M = evc:merge(evc:event(a, evc:new()), evc:event(b, evc:new())),
     A = evc:event(a, M),
     timer:sleep(10),
     B = evc:event(b, M),
@@ -48,7 +48,7 @@ compare_test() ->
     ?assertNot(evc:descends(B, A)),
     ?assert(evc:compare(A, B)),
     timer:sleep(10),
-    C = evc:event(c, evc:new(c)),
+    C = evc:event(c, evc:new()),
     C2 = evc:event(c, C),
     ?assertNot(evc:descends(A, C)),
     ?assertNot(evc:descends(C, A)),

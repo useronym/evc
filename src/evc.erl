@@ -11,7 +11,7 @@
 
 %% API
 -export([
-    new/0, new/1,
+    new/0,
     get_counter/2, get_timestamp/1, get_nodes/1,
     event/1, event/2,
     merge/2, descends/2,
@@ -21,12 +21,7 @@
 -define(TIMESTAMP, 'TIMESTAMP').
 
 new() ->
-    new(node()).
-
-
-new(Key) ->
-    M = dict:store(Key, 0, dict:new()),
-    dict:store(?TIMESTAMP, timestamp(), M).
+    dict:store(?TIMESTAMP, timestamp(), dict:new()).
 
 
 get_counter(Key, M) ->
