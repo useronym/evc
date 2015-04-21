@@ -22,12 +22,12 @@ merge_test() ->
     ?assertEqual([a, b], evc:get_nodes(evc:merge(A, B))),
     A2 = evc:event(a, A),
     M = evc:merge(A2, B),
-    ?assertEqual(1, evc:get_counter(a, M)),
+    ?assertEqual(2, evc:get_counter(a, M)),
     C = evc:new(c),
     M2 = evc:merge(M, evc:event(c, C)),
     M2a = evc:event(a, M2),
-    ?assertEqual(2, evc:get_counter(a, M2a)),
-    ?assertEqual(1, evc:get_counter(c, M2a)).
+    ?assertEqual(3, evc:get_counter(a, M2a)),
+    ?assertEqual(2, evc:get_counter(c, M2a)).
 
 older_test() ->
     A = evc:event(a, evc:new(a)),
