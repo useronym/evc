@@ -287,13 +287,13 @@ compare(Va, Vb) ->
 -ifdef(TEST).
 
 mean_timestamp_test() ->
-    A = evc:new(),
-    A1 = evc:event(a, A),
+    A = evc_riak:new(),
+    A1 = evc_riak:event(a, A),
     timer:sleep(50),
-    A2 = evc:event(b, A1),
+    A2 = evc_riak:event(b, A1),
     T = timestamp(),
     timer:sleep(50),
-    A3 = evc:event(c, A2),
+    A3 = evc_riak:event(c, A2),
     ?assertMatch(X when abs(X) < 1000, get_mean_timestamp(A3) - T).
 
 % To avoid an unnecessary dependency, we paste a function definition from riak_core_until.
@@ -302,20 +302,20 @@ riak_core_until_moment() ->
 
 % doc Serves as both a trivial test and some example code.
 example_test() ->
-    A = evc:new(),
-    B = evc:new(),
-    A1 = evc:event(a, A),
-    B1 = evc:event(b, B),
-    true = evc:descends(A1,A),
-    true = evc:descends(B1,B),
-    false = evc:descends(A1,B1),
-    A2 = evc:event(a, A1),
-    C = evc:merge(A2, B1),
-    C1 = evc:event(c, C),
-    true = evc:descends(C1, A2),
-    true = evc:descends(C1, B1),
-    false = evc:descends(B1, C1),
-    false = evc:descends(B1, A1),
+    A = evc_riak:new(),
+    B = evc_riak:new(),
+    A1 = evc_riak:event(a, A),
+    B1 = evc_riak:event(b, B),
+    true = evc_riak:descends(A1,A),
+    true = evc_riak:descends(B1,B),
+    false = evc_riak:descends(A1,B1),
+    A2 = evc_riak:event(a, A1),
+    C = evc_riak:merge(A2, B1),
+    C1 = evc_riak:event(c, C),
+    true = evc_riak:descends(C1, A2),
+    true = evc_riak:descends(C1, B1),
+    false = evc_riak:descends(B1, C1),
+    false = evc_riak:descends(B1, A1),
     ok.
 
 prune_small_test() ->
@@ -385,11 +385,11 @@ accessor_test() ->
 
 merge2_test() ->
     Time = timestamp(),
-    ?assertMatch({[], T} when abs(T - Time) < 100, merge(evc:new(), evc:new())),
+    ?assertMatch({[], T} when abs(T - Time) < 100, merge(evc_riak:new(), evc_riak:new())),
 
-    VC1 = event(1, event(1, evc:new())),
+    VC1 = event(1, event(1, evc_riak:new())),
     timer:sleep(100),
-    VC2 = event(2, evc:new()),
+    VC2 = event(2, evc_riak:new()),
     T1 = get_mean_timestamp(VC1),
     T2 = get_mean_timestamp(VC2),
     ?assertEqual({[{1, 2}, {2, 1}], (T1 + T2) div 2}, merge(VC1, VC2)).
@@ -398,22 +398,22 @@ merge_less_left_test() ->
     VC1 = [{<<"5">>, {5, 5}}],
     VC2 = [{<<"6">>, {6, 6}}, {<<"7">>, {7, 7}}],
     ?assertEqual([{<<"5">>, {5, 5}},{<<"6">>, {6, 6}}, {<<"7">>, {7, 7}}],
-        evc:merge_list([VC1, VC2])).
+        evc_riak:merge_list([VC1, VC2])).
 
 merge_less_right_test() ->
     VC1 = [{<<"6">>, {6, 6}}, {<<"7">>, {7, 7}}],
     VC2 = [{<<"5">>, {5, 5}}],
     ?assertEqual([{<<"5">>, {5, 5}},{<<"6">>, {6, 6}}, {<<"7">>, {7, 7}}],
-        evc:merge_list([VC1, VC2])).
+        evc_riak:merge_list([VC1, VC2])).
 
 merge_same_id_test() ->
     VC1 = [{<<"1">>, {1, 2}},{<<"2">>,{1,4}}],
     VC2 = [{<<"1">>, {1, 3}},{<<"3">>,{1,5}}],
     ?assertEqual([{<<"1">>, {1, 3}},{<<"2">>,{1,4}},{<<"3">>,{1,5}}],
-        evc:merge_list([VC1, VC2])).
+        evc_riak:merge_list([VC1, VC2])).
 
 get_entry_test() ->
-    VC = evc:new(),
+    VC = evc_riak:new(),
     VC1 = event(a, event(c, event(b, event(a, VC)))),
     ?assertMatch({ok, {a, 2}}, get_dot(a, VC1)),
     ?assertMatch({ok, {b, 1}}, get_dot(b, VC1)),
@@ -421,7 +421,7 @@ get_entry_test() ->
     ?assertEqual(undefined, get_dot(d, VC1)).
 
 valid_entry_test() ->
-    VC = evc:new(),
+    VC = evc_riak:new(),
     VC1 = event(c, event(b, event(a, VC))),
     [begin
          {ok, E} = get_dot(Actor, VC1),
