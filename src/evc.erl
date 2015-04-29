@@ -13,7 +13,7 @@
 -export([
     new/0,
     get_counter/2, get_timestamp/1, get_nodes/1,
-    event/1, event/2,
+    increment/1, increment/2,
     merge/2, descends/2,
     compare/2]).
 
@@ -36,11 +36,11 @@ get_nodes({M, _Ts}) ->
     maps:keys(M).
 
 
-event(M) ->
-    event(node(), M).
+increment(M) ->
+    increment(node(), M).
 
 
-event(Pid, {M, _Ts}) ->
+increment(Pid, {M, _Ts}) ->
     Mm = maps:put(Pid, maps:get(Pid, M, 0) + 1, M),
     {Mm, timestamp()}.
 
