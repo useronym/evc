@@ -3,3 +3,4 @@
 .rebar/
 ebin/
 evc.iml
+_build
